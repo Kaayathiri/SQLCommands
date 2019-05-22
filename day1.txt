@@ -1,1 +1,11 @@
 select*from table;
+
+create or replace procedure tesco_category (C char)
+  2  is 
+  3  NewCid number (3);
+  4  begin 
+  5  select nvl(max(cid),0)+1) into NewCid from category;
+  6  insert into category values (NewCId, C);
+  7  end;
+  8* /
+
