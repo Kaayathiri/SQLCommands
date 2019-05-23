@@ -1,0 +1,84 @@
+STORED PROCEDURES
+
+
+
+SQL> create or replace procedure firstprocedure
+  2  is
+  3  begin
+  4  dbms_output.put_line('hello my friends');
+  5  end;
+
+
+
+
+SQL> create or replace procedure addition
+  2  is 
+  3  a number(3);
+  4  b number (3);
+  5  c number (3);
+  6  begin
+  7  a:=15;
+  8  b:=12;
+  9  c:=a+b;
+ 10  dbms_output.put_line('The result is');
+ 11  dbmis_output.put_line ('c');
+ 12  end;
+
+
+
+SQL> create or replace procedure add (A number, B number, C number)
+  2  is 
+  3  result number (3);
+  4  begin
+  5  result := a+b+c; 
+  6  dbms_output.put_line('THe result is'||result);
+  7  end;
+  8* /
+
+
+
+SQL> create or replace procedure createbank2account (accno1 char, name1 char, address1 char)
+  2  is
+  3  begin
+  4  insert into bank2 values ( ( select upper (substr(accno1,1,1)) || upper (substr(address1,1,1)) || LPAD (NVL (MAX(substr(accno1,3,3))+1,1),3,'0') from bank2 where substr(Accno1,1,1)= upper(substr(accno1,1,1))), name1, address1);
+  6* /
+
+
+
+
+
+
+
+
+SQL> create or replace procedure record (R number, N char, M number)
+  2  is
+  3  begin
+  4  insert into school values (R, N, M);
+  5  end;
+  6* /
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> create or replace procedure employee_info (EmploNumber number)
+  2  is
+  3  FName char(20);
+  4  LName char(20);
+  5  Salary number(6);
+  6  begin
+  7  select first_name,last_name,salary into FName,LNAme,Salary from employees where employee_id=EmploNumber;
+  8  DBMS_output.put_line(FName  || LName  || Salary );
+  9  end;
+ 10* /
+
+
+
+

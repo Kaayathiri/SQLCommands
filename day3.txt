@@ -1,0 +1,19 @@
+SQL> create or replace procedure categoryentry (CAT char, SUB char)
+  2  is
+  3  NEWCID number (3);
+  4  NEWSID number (3);
+  5  begin
+  6  select nvl (max(cid),0) into NEWCID from category where description=CAT;
+  7  if NEWCID=0 then
+  8  select nvl(max(cid),0)+1 into NEWCID from category;
+  9  insert into category values (NEWCID,CAT);
+ 10  end if;
+ 11  select nvl (max (sid),0)+10 into NEWSID from sub_category2 where cid=NEWCID;
+ 12  insert into sub_category2 values (NEWCID, NEWSID, SUB);
+ 13  end;
+ 14* /
+
+
+SQL> create table sub_category2 as select * from sub_category;                                           to create the same table again
+
+
