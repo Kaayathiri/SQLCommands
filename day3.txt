@@ -1,19 +1,130 @@
-SQL> create or replace procedure categoryentry (CAT char, SUB char)
-  2  is
-  3  NEWCID number (3);
-  4  NEWSID number (3);
+
+
+CREATE FUNCTIONS AND TRIGGERS
+
+
+SQL> create or replace function tax (T number)                                                       tax function
+  2  return number
+  3  is
+  4  result number (8,2);
+  5  begin 
+  6  result := T * 21/100;
+  7  return result;
+  8  end;
+
+
+
+     
+                                                                                                     function to calculate tax for salary (T) less than 500, between 500 and 1000 and over 1000
+SQL> create or replace function tax2 (T number)                                                    
+  2  return number
+  3  IS
+  4  result number (8,2);
+  5  begin 
+  6  if T<=500 then
+  7  result :=0;
+  8  end if;
+  9  if T>500 and T <= 1000 then
+ 10  result := T * 15/100;
+ 11  end if;
+ 12  if T >1000 then 
+ 13  result := T * 21/100;
+ 14  end if;
+ 15  return result;
+ 16  end;
+ 17* /
+
+
+                                                                                                                          department names even if data in actual tables change
+SQL> create or replace function DName (D number)
+  2  return char
+  3  is 
+  4  DN departments.department_name %type;
   5  begin
-  6  select nvl (max(cid),0) into NEWCID from category where description=CAT;
-  7  if NEWCID=0 then
-  8  select nvl(max(cid),0)+1 into NEWCID from category;
-  9  insert into category values (NEWCID,CAT);
- 10  end if;
- 11  select nvl (max (sid),0)+10 into NEWSID from sub_category2 where cid=NEWCID;
- 12  insert into sub_category2 values (NEWCID, NEWSID, SUB);
- 13  end;
- 14* /
+  6  select department_name into DN from departments where department_id=D;
+  7  return DN;
+  8  end;
+  9* /
 
 
-SQL> create table sub_category2 as select * from sub_category;                                           to create the same table again
+                                                   
+
+                                                                                                                            query: to get count of subcategory, products from category 
+SQL> create or replace function countsubcategory (subcat number)
+  2  return number 
+  3  is 
+  4  total number (5);
+  5  begin
+  6  select count (*) into total from sub_category where CID=subcat  ;
+  7  return total;
+  8  end;
+  9* /
+
+SQL> create or replace function countproducts (subcat number)
+  2  return number 
+  3  is 
+  4  countsid number (5);
+  5  begin 
+  6  select count (*) into countsid from products where sid in( select sid from sub_category where cid=subcat);
+  7  return countsid;
+  8  end;
+  9* /
+
+
+                                                                                                                          trigger to delete records in school (As a whole)
+SQL> create or replace trigger delete_School
+  2  after delete on school
+  3  declare 
+  4  begin
+  5  dbms_output.put_line ('You have deleted a record');
+  6  end;
+  7* /
+
+
+                                                                                                                         trigger to delete each row of records
+SQL> create or replace trigger delete_school_Each
+  2  after delete on school 
+  3  for each row 
+  4  begin
+  5  dbms_output.put_line ('You have deleted a record');
+  6  end;
+  7  /
+
+
+                                                                                                                         trigger that creates a backup table is data is deleted
+SQL> create or replace trigger takebackup
+  2  before delete on school 
+  3  for each row
+  4  begin
+  5  insert into backup_School values (:old.regno, :old.name, :old.marks);
+  6  end;
+  7  /
+
+                                                                                                                      ^ with info about user who deleted record and date
+SQL> create or replace trigger takebackup
+  2  before delete on school 
+  3  for each row
+  4  begin
+  5  insert into backup_School values (:old.regno, :old.name, :old.marks, user, sysdate);
+  6  end;
+  7* /
+
+
+SQL> create or replace trigger insert_trigger
+  2  before insert on school 
+  3  for each row 
+  4  begin 
+  5  if :new.marks = 58 or :new.marks=59 then
+  6   :new.marks:=60;
+  7  end if;
+  8  :new.name:=upper(:new.name);
+  9  end;
+ 10* /
+
+
+
+
+
+
 
 
